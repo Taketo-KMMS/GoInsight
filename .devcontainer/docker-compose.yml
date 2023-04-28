@@ -1,0 +1,89 @@
+version: '3.7'
+
+x-aws-access-key-id: &aws-access-key-id
+  "goinsight-aws-user"
+x-aws-secret-access-key: &aws-secret-access-key
+  "goinsight-aws-password"
+x-aws-region: &aws-region
+  "ap-northeast-1"
+
+x-aws-environment: &aws-environment
+  AWS_ACCESS_KEY_ID: *aws-access-key-id
+  AWS_SECRET_ACCESS_KEY: *aws-secret-access-key
+  AWS_REGION: *aws-region
+
+x-aurora-database-url: &aurora-database-url
+  "postgres://muser:mpass@aurora:5432/goinsight"
+x-aurora-database: &aurora-database
+  "goinsight"
+x-aurora-master-user: &aurora-master-user
+  "muser"
+x-aurora-master-password: &aurora-master-password
+  "mpass"
+
+services:
+  app:
+    container_name: gi-admin
+    build:
+      context: ..
+      dockerfile: dockerfiles/app.Dockerfile
+      target: development
+    environment:
+      TZ: Asia/Tokyo
+      ENV: "dev"
+      # Django values
+      SECRET_KEY: "local-secret"
+      DATABASE_URL: *aurora-database-url
+    ports:
+      - 8000:8000
+  aurora:
+    container_name: giv-local-aurora
+    image: postgres:14-alpine
+    environment:
+      POSTGRES_DB: *aurora-database
+      POSTGRES_USER: *aurora-master-user
+      POSTGRES_PASSWORD: *aurora-master-password
+      TZ: Asia/Tokyo
+    ports:
+      - 5432:5432
+    volumes:
+      - giv-aurora:/var/lib/postgresql/data
+  s3:
+    container_name: giv-local-s3
+    build:
+      context: s3
+    environment:
+      MINIO_ROOT_USER: *aws-access-key-id
+      MINIO_ROOT_PASSWORD: *aws-secret-access-key
+      MINIO_REGION: *aws-region
+    ports:
+      - 19000:9000
+      - 19001:9001
+    volumes:
+      - giv-s3:/data
+      - ./s3/policies:/policies
+  dynamodb:
+    container_name: giv-local-dynamodb
+    image: amazon/dynamodb-local:latest
+    user: root
+    command: -jar DynamoDBLocal.jar -sharedDb -dbPath /data
+    environment: *aws-environment
+    ports:
+      - 18000:8000
+    volumes:
+      - giv-dynamodb:/data
+  dynamodb-admin:
+    container_name: giv-local-dynamodb-admin
+    image: aaronshaf/dynamodb-admin:latest
+    environment:
+      <<: *aws-environment
+      DYNAMO_ENDPOINT: http://dynamodb:8000
+    ports:
+      - 18001:8001
+    depends_on:
+      - dynamodb
+
+volumes:
+  giv-aurora:
+  giv-s3:
+  giv-dynamodb:

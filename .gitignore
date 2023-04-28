@@ -1,0 +1,10 @@
+*.py[cod]
+__pycache__/
+.mypy_cache/
+.venv/
+venv/
+.env
+*.log
+*.sqlite3
+.DS_Store
+.gitconfig

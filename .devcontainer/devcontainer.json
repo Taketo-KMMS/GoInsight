@@ -1,0 +1,40 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/python
+{
+    "name": "GoInsightManager",
+    "dockerComposeFile": [
+        "./docker-compose.yml"
+    ],
+    "service": "app",
+    "workspaceFolder": "/goinsight-admin",
+    "mounts": [
+        {
+            "source": "${localWorkspaceFolder}",
+            "target": "${containerWorkspaceFolder}",
+            "type": "bind"
+        }
+    ],
+    "postCreateCommand": [
+        "./scripts/init-dev-container.sh"
+    ],
+    "postStartCommand": [
+        "poetry",
+        "install"
+    ],
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.flake8",
+                "ms-python.isort",
+                "batisteo.vscode-django",
+                "njpwerner.autodocstring",
+                "kevinrose.vsc-python-indent",
+                "shardulm94.trailing-spaces"
+            ]
+        }
+    },
+    "forwardPorts": [
+        8000
+    ]
+}

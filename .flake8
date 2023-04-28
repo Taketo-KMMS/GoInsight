@@ -1,0 +1,6 @@
+[flake8]
+per-file-ignores =
+  *.py: E203
+  *.pyi: E302,E701
+max-line-length = 120
+exclude = .git,__pycache__,.venv,venv,.mypy_cache,*migrations*
