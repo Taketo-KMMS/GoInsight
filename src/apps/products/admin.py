@@ -13,7 +13,7 @@ class ProductCategoryAdmin(MPTTModelAdmin):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     form = ProductForm
-    list_display = ["code", "name", "created_at"]
+    list_display = ("code", "name", "created_at")
 
 
 admin.site.register(ProductMaker)

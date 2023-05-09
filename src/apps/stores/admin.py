@@ -1,9 +1,7 @@
 from django.contrib import admin
-from django.db.models import QuerySet
-from django.http import HttpRequest
 from nested_admin import nested
 
-from .forms import ShelfAreaFormSet, ShelfForm
+from .forms import ShelfForm, ShelfProductAllocForm
 from .models import (
     Shelf,
     ShelfArea,
@@ -18,20 +16,14 @@ from .models import (
 
 class StoreCategoryInline(nested.NestedStackedInline):
     model = StoreCategory
-
-    def get_queryset(self, request: HttpRequest):
-        qs: "QuerySet[StoreCategory]" = super().get_queryset(request)
-        return qs.select_related("store_branch", "store_branch__store")
+    list_select_related = ("store_branch", "store_branch__store")
 
 
 class StoreBranchInline(nested.NestedStackedInline):
     extra = 1
     model = StoreBranch
     inlines = [StoreCategoryInline]
-
-    def get_queryset(self, request: HttpRequest):
-        qs: "QuerySet[StoreBranch]" = super().get_queryset(request)
-        return qs.select_related("store")
+    list_select_related = ("store",)
 
 
 @admin.register(Store)
@@ -47,15 +39,17 @@ class ShelfAreaInline(nested.NestedStackedInline):
     extra = 1
     model = ShelfArea
     inlines = [ShelfAreaRectInline]
-    formset = ShelfAreaFormSet
 
 
 class ShelfProductAllocRectInline(nested.NestedTabularInline):
+    extra = 0
     model = ShelfProductAllocRect
 
 
 class ShelfProductAllocInline(nested.NestedTabularInline):
+    extra = 1
     model = ShelfProductAlloc
+    form = ShelfProductAllocForm
     inlines = [ShelfProductAllocRectInline]
 
 

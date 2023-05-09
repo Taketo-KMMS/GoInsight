@@ -2,6 +2,8 @@ SRC_DIR = src
 APP_DIR = $(SRC_DIR)/apps
 ENTRYPOINT = $(SRC_DIR)/manage.py
 
+DUMMY_DB_DATA = src/.fixtures/dump.json
+
 PYTHON = poetry run python
 DJANGO = $(PYTHON) $(ENTRYPOINT)
 
@@ -41,3 +43,12 @@ format:
 lint: format
 	flake8 .
 	mypy .
+
+.PHONY: dumpdata
+dumpdata:
+	@mkdir -p $(DUMMY_DATA_DIR)
+	$(DJANGO) dumpdata > $(DUMMY_DB_DATA)
+
+.PHONY: loaddata
+loaddata:
+	$(DJANGO) loaddata $(DUMMY_DB_DATA)

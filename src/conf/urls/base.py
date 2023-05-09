@@ -20,6 +20,7 @@ admin.site.site_title = admin.site.site_header = "GoInsight管理"
 
 urlpatterns = [
     path("_nested_admin/", include("nested_admin.urls")),
-    path("__debug__/", include("debug_toolbar.urls")),
+    path("api/select2/products", include("apps.products.urls_select2")),
+    path("api/select2/researches", include("apps.researches.urls_select2")),
     path("", admin.site.urls),
 ]

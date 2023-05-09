@@ -1,5 +1,4 @@
 # TODO: イベントCSVインポートエクスポートページ
-
 from typing import Sequence
 
 from django.contrib import admin
@@ -7,7 +6,6 @@ from django.contrib import admin
 from .models import AreaEvent, BaseEvent, FrameEvent, OptionalEvent, ProductEvent
 
 
-# TODO: 期間も絞り込みはいる
 class EventAdminBase(admin.ModelAdmin):
     list_select_related: Sequence[str] = ("customer__research", "customer__research__project")
 
@@ -38,7 +36,7 @@ class FrameEventAdmin(EventAdminBase):
 @admin.register(AreaEvent)
 class AreaEventAdmin(EventAdminBase):
     list_display = ("id", "project", "research", "customer", "area_number", "in_time", "out_time")
-    list_select_related = [*EventAdminBase.list_select_related, "area"]
+    list_select_related = (*EventAdminBase.list_select_related, "area")
 
     def area_number(self, obj: AreaEvent):
         return obj.area.area_number
@@ -55,7 +53,7 @@ class AreaEventAdmin(EventAdminBase):
 
 @admin.register(ProductEvent)
 class ProductEventAdmin(EventAdminBase):
-    # TODO: JANコード完全一致、商品名のサジェスト、での絞り込み
+    search_fields = ("=allocation__product__code", "allocation__product__name")
     list_display = (
         "id",
         "project",
@@ -67,7 +65,7 @@ class ProductEventAdmin(EventAdminBase):
         "buy_flag",
         "touch_time",
     )
-    list_select_related = [*EventAdminBase.list_select_related, "allocation__product", "allocation__product__maker"]
+    list_select_related = (*EventAdminBase.list_select_related, "allocation__product", "allocation__product__maker")
 
     def product_code(self, obj: ProductEvent):
         return obj.allocation.product.code

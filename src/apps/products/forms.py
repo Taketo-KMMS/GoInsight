@@ -16,6 +16,6 @@ class ProductForm(forms.ModelForm):
         fields = ("code", "name", "maker", "category")
 
     def clean_name(self):
-        name = self.ceaned_data["name"]
-        if name := self.ceaned_data["name"]:
+        name = self.cleaned_data["name"]
+        if name := self.cleaned_data["name"]:
             return normalize_string(name)

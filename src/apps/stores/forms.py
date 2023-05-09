@@ -1,7 +1,7 @@
+from dal import autocomplete
 from django import forms
-from nested_admin.formsets import NestedInlineFormSet
 
-from .models import Shelf, ShelfArea, StoreCategory
+from .models import Shelf, ShelfProductAlloc, StoreCategory
 
 
 class ShelfForm(forms.ModelForm):
@@ -15,5 +15,15 @@ class ShelfForm(forms.ModelForm):
         fields = ("store_category", "start_date", "end_date", "file")
 
 
-class ShelfAreaFormSet(NestedInlineFormSet):
-    model = ShelfArea
+class ShelfProductAllocForm(forms.ModelForm):
+    class Meta:
+        model = ShelfProductAlloc
+        fields = "__all__"
+        widgets = {
+            "product": autocomplete.ModelSelect2(
+                url="products_select2:index",
+                attrs={
+                    "data-minimum-input-length": 2,
+                },
+            )
+        }

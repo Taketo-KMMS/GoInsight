@@ -17,4 +17,4 @@ class ProjectCustomerAttrInline(admin.TabularInline):
 class ProjectAdmin(admin.ModelAdmin):
     model = Project
     inlines = [ResearchInline, ProjectCustomerAttrInline]
-    list_display = ["id", "name", "store_category"]
+    list_display = ("id", "name", "store_category")

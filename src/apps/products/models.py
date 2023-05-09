@@ -6,6 +6,8 @@ from mptt.models import MPTTModel, TreeForeignKey, TreeManager
 
 from common.db.models import BaseModel
 
+from .validators import validate_product_code
+
 if TYPE_CHECKING:
     from django.db.models.manager import RelatedManager
 
@@ -54,7 +56,7 @@ class ProductCategory(MPTTModel, BaseModel):
 
 class Product(BaseModel):
     # POPやQRは大文字英語+yyyymmddhhmm
-    code = models.CharField("商品コード", primary_key=True, max_length=14)
+    code = models.CharField("商品コード", primary_key=True, max_length=14, validators=[validate_product_code])
     name = models.CharField("商品名", max_length=100, db_column="name")
     maker = models.ForeignKey(ProductMaker, verbose_name="メーカー", null=True, blank=True, on_delete=models.CASCADE)
     maker_id: int | None

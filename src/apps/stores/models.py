@@ -89,6 +89,9 @@ class Shelf(BaseModel):
         db_table = "shelves"
 
     def clean(self) -> None:
+        if not self.start_date or not self.end_date:
+            return
+
         qs = self.__class__.objects.filter(end_date__gt=self.start_date, start_date__lt=self.end_date)
         duplicate = qs.first()
         if duplicate is not None:
